@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "PlantTracker",
+    "name": "plant-tracker",
     "slug": "plant-tracker",
     "privacy": "public",
     "sdkVersion": "35.0.0",
