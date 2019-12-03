@@ -5,16 +5,19 @@
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web",
-    "eject": "expo eject"
+    "eject": "expo eject",
+    "test": "jest"
   },
   "dependencies": {
     "expo": "^35.0.0",
     "react": "16.8.3",
     "react-dom": "16.8.3",
     "react-native": "https://github.com/expo/react-native/archive/sdk-35.0.0.tar.gz",
-    "react-native-web": "^0.11.7"
+    "react-native-web": "^0.11.7",
+    "styled-components": "^4.4.1"
   },
   "devDependencies": {
+    "@testing-library/react-native": "^5.0.1",
     "@types/react": "^16.8.23",
     "@types/react-native": "^0.57.65",
     "@typescript-eslint/eslint-plugin": "^2.10.0",
@@ -26,7 +29,12 @@
     "eslint-plugin-import": "^2.18.2",
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-react": "^7.17.0",
+    "jest-expo": "^35.0.0",
+    "react-test-renderer": "^16.8.3",
     "typescript": "^3.6.3"
+  },
+  "jest": {
+    "preset": "@testing-library/react-native"
   },
   "private": true
 }
