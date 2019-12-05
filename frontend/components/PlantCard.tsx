@@ -10,9 +10,9 @@ interface PropsInterface {
 }
 
 const PlantCardStyles = styled.View`
-  flex: 1;
   background: whitesmoke;
-  margin: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
   border-radius: 5;
   border: 1px solid black;
   shadow-color: black;
