@@ -46,8 +46,6 @@ const NextWatering = (props: Props) => {
     new Date(props.nextWatering),
     new Date()
   );
-  console.log(daysToNextWatering);
-
   const textProps = getTextProps(daysToNextWatering);
 
   return (
