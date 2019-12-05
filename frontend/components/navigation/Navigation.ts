@@ -1,18 +1,32 @@
 import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
+import { createBottomTabNavigator } from 'react-navigation-tabs';
 import HomeScreen from '../screens/HomeScreen';
 import PlantsScreen from '../screens/PlantsScreen';
 
-const MainNavigator = createStackNavigator(
+const TabNavigator = createBottomTabNavigator(
   {
     Home: HomeScreen,
     Plants: PlantsScreen
   },
   {
-    initialRouteName: 'Home'
+    initialRouteName: 'Home',
+    backBehaviour: 'history',
+    tabBarOptions: {
+      activeBackgroundColor: 'white',
+      activeTintColor: 'green',
+      inactiveBackgroundColor: 'white',
+      inactiveTintColor: 'black',
+      showIcon: false,
+      style: {
+        height: 25
+      },
+      tabStyle: {
+        borderRadius: 5
+      }
+    }
   }
 );
 
-const Navigation = createAppContainer(MainNavigator);
+const Navigation = createAppContainer(TabNavigator);
 
 export default Navigation;

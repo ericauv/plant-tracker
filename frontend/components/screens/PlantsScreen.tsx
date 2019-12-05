@@ -1,9 +1,9 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { SafeAreaView, Text } from 'react-native';
 import styled from 'styled-components';
-
-const PlantsView = styled.View`
-  background: green;
+import PlantList from '../PlantList';
+const PlantsView = styled.SafeAreaView`
+  /* background: green; */
   height: 100%;
   width: 100%;
 `;
@@ -11,7 +11,8 @@ const PlantsView = styled.View`
 const PlantsScreen = () => {
   return (
     <PlantsView>
-      <Text>This is the Plantscreen</Text>
+      <Text style={{ marginLeft: 10, fontSize: 32 }}>Plants</Text>
+      <PlantList></PlantList>
     </PlantsView>
   );
 };
