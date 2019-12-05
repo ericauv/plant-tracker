@@ -1,15 +1,18 @@
 import React from 'react';
 import styled from 'styled-components';
-import { View, Text } from 'react-native';
+import { View, Text, Image } from 'react-native';
 import NextWatering from './NextWatering';
+import plantImage from '../assets/leaf.png';
 
 interface PropsInterface {
   name: string;
   species: string;
+  photo: string;
   nextWatering: number;
 }
 
 const PlantCardStyles = styled.View`
+  flex-direction: row;
   background: whitesmoke;
   margin-left: 5px;
   margin-right: 5px;
@@ -22,16 +25,26 @@ const PlantCardStyles = styled.View`
   elevation: 2;
   padding-top: 5px;
   padding-bottom: 5px;
-  padding-left: 10px;
+  padding-left: 5px;
   padding-right: 10px;
 `;
 
+const PlantDetailsStyles = styled.View`
+  flex: 1;
+  flex-direction: column;
+  margin-left: 10px;
+`;
+
 const PlantCard = (props: PropsInterface) => {
+  const photo = props.photo ? { uri: props.photo } : plantImage;
   return (
     <PlantCardStyles>
-      <Text>{props.name}</Text>
-      <Text>{props.species}</Text>
-      <NextWatering nextWatering={props.nextWatering}></NextWatering>
+      <Image style={{ width: 100, height: 100 }} source={photo} />
+      <PlantDetailsStyles>
+        <Text style={{ fontWeight: 'bold' }}>{props.name}</Text>
+        <Text style={{ fontStyle: 'italic' }}>{props.species}</Text>
+        <NextWatering nextWatering={props.nextWatering}></NextWatering>
+      </PlantDetailsStyles>
     </PlantCardStyles>
   );
 };
