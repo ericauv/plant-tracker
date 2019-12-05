@@ -49,8 +49,10 @@ const NextWatering = (props: Props) => {
   const textProps = getTextProps(daysToNextWatering);
 
   return (
-    <View>
-      <Text style={{ color: textProps.color }}>{textProps.day}</Text>
+    <View style={{ marginTop: 'auto' }}>
+      <Text style={{ color: textProps.color }}>
+        Needs water {textProps.day}
+      </Text>
     </View>
   );
 };
