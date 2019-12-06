@@ -5,6 +5,7 @@ import { ApolloProvider } from '@apollo/react-hooks';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
+import Navigation from './components/navigation/Navigation';
 import Card from './components/Card';
 const cache = new InMemoryCache();
 const link = new HttpLink({
@@ -19,10 +20,7 @@ const client = new ApolloClient({
 const App = () => {
   return (
     <ApolloProvider client={client}>
-      <View style={styles.container}>
-        <Text>Test</Text>
-        <Card></Card>
-      </View>
+      <Navigation></Navigation>
     </ApolloProvider>
   );
 };
