@@ -1,7 +1,7 @@
 export interface Plant {
-  id: number;
+  id: string;
   name: string;
-  speciesId: number;
+  speciesId: string;
   photo: string;
   wateringInterval: number;
   lastWatered: Date;
@@ -11,9 +11,9 @@ export interface Plant {
 
 export const plants: Plant[] = [
   {
-    id: 1,
+    id: '1',
     name: 'Molly',
-    speciesId: 1,
+    speciesId: '1',
     photo: '',
     wateringInterval: 7,
     lastWatered: new Date(2019, 11, 1),
@@ -21,9 +21,9 @@ export const plants: Plant[] = [
     description: '15 years old monstera plant!',
   },
   {
-    id: 2,
+    id: '2',
     name: 'Frank',
-    speciesId: 2,
+    speciesId: '2',
     photo: '',
     wateringInterval: 10,
     lastWatered: new Date(2019, 11, 1),

@@ -1,5 +1,5 @@
 export interface User {
-  id: number;
+  id: string;
   name: string;
   plantIds: number[];
   climate: string;
@@ -7,7 +7,7 @@ export interface User {
 
 export const users: User[] = [
   {
-    id: 1,
+    id: '1',
     name: 'Shini',
     plantIds: [1, 2],
     climate: 'canadian winter',

@@ -11,7 +11,7 @@ enum lightAmount {
 }
 
 export interface Species {
-  id: number;
+  id: string;
   species: string;
   soilType: string;
   waterAmount: waterAmount;
@@ -22,7 +22,7 @@ export interface Species {
 
 export const species: Species[] = [
   {
-    id: 1,
+    id: '1',
     species: 'Monstera Delicioso',
     soilType: 'coarse',
     waterAmount: waterAmount.medium,
@@ -31,7 +31,7 @@ export const species: Species[] = [
     description: '',
   },
   {
-    id: 2,
+    id: '2',
     species: 'Ficus lyrata',
     soilType: 'regular',
     waterAmount: waterAmount.medium,

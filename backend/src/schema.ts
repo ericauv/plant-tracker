@@ -30,10 +30,10 @@ const schema = gql`
   }
 
   type Query {
-    user(id: ID!): User
+    user(id: ID): User
+    users: [User]
     plants(userId: ID): [Plant]
     species(speciesName: String): [Species]
-    testMessage: String!
   }
 `;
 
