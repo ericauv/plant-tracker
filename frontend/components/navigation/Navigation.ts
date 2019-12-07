@@ -2,11 +2,13 @@ import { createAppContainer } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import HomeScreen from '../screens/HomeScreen';
 import PlantsScreen from '../screens/PlantsScreen';
+import AddPlantScreen from '../screens/AddPlantScreen';
 
 const TabNavigator = createBottomTabNavigator(
   {
     Home: HomeScreen,
-    Plants: PlantsScreen
+    Plants: PlantsScreen,
+    Add: AddPlantScreen,
   },
   {
     initialRouteName: 'Home',
@@ -18,12 +20,12 @@ const TabNavigator = createBottomTabNavigator(
       inactiveTintColor: 'black',
       showIcon: false,
       style: {
-        height: 25
+        height: 25,
       },
       tabStyle: {
-        borderRadius: 5
-      }
-    }
+        borderRadius: 5,
+      },
+    },
   }
 );
 

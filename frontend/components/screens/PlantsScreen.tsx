@@ -2,6 +2,7 @@ import React from 'react';
 import { SafeAreaView, Text } from 'react-native';
 import styled from 'styled-components';
 import PlantList from '../PlantList';
+
 const PlantsView = styled.SafeAreaView`
   /* background: green; */
   flex: 1;
