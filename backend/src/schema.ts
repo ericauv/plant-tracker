@@ -35,6 +35,10 @@ const schema = gql`
     plants(userId: ID): [Plant]
     species(speciesName: String): [Species]
   }
+
+  type Mutation {
+    addPlant(name: String!, species: String, description: String): String
+  }
 `;
 
 export default schema;

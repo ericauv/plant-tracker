@@ -26,6 +26,16 @@ const Resolvers = {
       return plants;
     },
   },
+  Mutation: {
+    addPlant: (
+      parent: any,
+      args: { name: string; species: string; description: string },
+      ctx: any,
+      info: any
+    ) => {
+      return `added plant: ${args.name}`;
+    },
+  },
 };
 
 export default Resolvers;

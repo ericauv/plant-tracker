@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Text, Button, TextInput, Alert } from 'react-native';
 import styled from 'styled-components';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 const AddPlantView = styled.SafeAreaView`
   flex: 1;
@@ -14,12 +16,22 @@ const Input = styled.TextInput`
   border-width: 1;
 `;
 
+const ADD_PLANT_MUTATUION = gql`
+  mutation AddPlant($name: String!, $species: String, $description: String) {
+    addPlant(name: $name, species: $species, description: $description)
+  }
+`;
+
 const AddPlantScreen = () => {
   const [name, setName] = useState('give the plant a name');
   const [species, setSpecies] = useState('plant species');
   const [description, setDescription] = useState('description');
+  const [addPlant] = useMutation(ADD_PLANT_MUTATUION);
   const onSubmit = () => {
-    Alert.alert('Add Plant');
+    addPlant({
+      variables: { name: name, species: species, description: description },
+    });
+    Alert.alert(`Add ${name}`);
   };
 
   return (
@@ -30,7 +42,9 @@ const AddPlantScreen = () => {
         value={description}
         onChangeText={text => setDescription(text)}
       ></Input>
+      {/* <Mutation mutation={ADD_PLANT_MUTATUION}> */}
       <Button title="Submit Plant" onPress={() => onSubmit()} />
+      {/* </Mutation> */}
     </AddPlantView>
   );
 };
