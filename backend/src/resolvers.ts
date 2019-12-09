@@ -24,7 +24,7 @@ const Resolvers = {
     },
     plants: (parent: any, args: { id: number }, ctx: any, info: any) => {
       return plants;
-    },
+    }
   },
   Mutation: {
     addPlant: (
@@ -33,9 +33,10 @@ const Resolvers = {
       ctx: any,
       info: any
     ) => {
+      console.log(`added plant: ${args.name}`);
       return `added plant: ${args.name}`;
-    },
-  },
+    }
+  }
 };
 
 export default Resolvers;

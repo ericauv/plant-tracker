@@ -6,10 +6,10 @@ import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
 import Navigation from './components/navigation/Navigation';
-import Card from './components/Card';
+import { BACKEND_URI } from './config.js';
 const cache = new InMemoryCache();
 const link = new HttpLink({
-  uri: 'http://localhost:4001/'
+  uri: 'http://192.168.0.15:4001/'
 });
 
 const client = new ApolloClient({

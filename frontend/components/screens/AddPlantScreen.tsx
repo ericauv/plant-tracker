@@ -1,13 +1,19 @@
 import React, { useState } from 'react';
-import { Text, Button, TextInput, Alert } from 'react-native';
+import {
+  TouchableWithoutFeedback,
+  Button,
+  SafeAreaView,
+  Text,
+  TextInput,
+  Alert,
+  Keyboard
+} from 'react-native';
 import styled from 'styled-components';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useMutation } from '@apollo/react-hooks';
 import gql from 'graphql-tag';
 
 const AddPlantView = styled.SafeAreaView`
   flex: 1;
-  height: 100%;
-  width: 100%;
 `;
 
 const Input = styled.TextInput`
@@ -16,36 +22,75 @@ const Input = styled.TextInput`
   border-width: 1;
 `;
 
-const ADD_PLANT_MUTATUION = gql`
-  mutation AddPlant($name: String!, $species: String, $description: String) {
+const ADD_PLANT_MUTATION = gql`
+  mutation ADD_PLANT_MUTATION(
+    $name: String!
+    $species: String
+    $description: String
+  ) {
     addPlant(name: $name, species: $species, description: $description)
   }
 `;
 
 const AddPlantScreen = () => {
-  const [name, setName] = useState('give the plant a name');
-  const [species, setSpecies] = useState('plant species');
-  const [description, setDescription] = useState('description');
-  const [addPlant] = useMutation(ADD_PLANT_MUTATUION);
+  const [name, setName] = useState('');
+  const [species, setSpecies] = useState('');
+  const [description, setDescription] = useState('');
+  const [added, setAdded] = useState('');
+  const [addPlant] = useMutation(ADD_PLANT_MUTATION);
   const onSubmit = () => {
     addPlant({
-      variables: { name: name, species: species, description: description },
+      variables: { name: name, species: species, description: description }
     });
-    Alert.alert(`Add ${name}`);
+    Keyboard.dismiss();
+    setAdded(`Added ${name}`);
+    setName('');
+    setSpecies('');
+    setDescription('');
+    setTimeout(() => setAdded(''), 1500);
   };
 
   return (
-    <AddPlantView>
-      <Input value={name} onChangeText={text => setName(text)}></Input>
-      <Input value={species} onChangeText={text => setSpecies(text)}></Input>
-      <Input
-        value={description}
-        onChangeText={text => setDescription(text)}
-      ></Input>
-      {/* <Mutation mutation={ADD_PLANT_MUTATUION}> */}
-      <Button title="Submit Plant" onPress={() => onSubmit()} />
-      {/* </Mutation> */}
-    </AddPlantView>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+      <AddPlantView>
+        <Input
+          value={name}
+          placeholder={'Enter a name'}
+          onChangeText={text => setName(text)}
+        ></Input>
+        <Input
+          value={species}
+          placeholder={'Enter a species'}
+          onChangeText={text => setSpecies(text)}
+        ></Input>
+        <Input
+          placeholder={'Enter a description'}
+          value={description}
+          onChangeText={text => setDescription(text)}
+        ></Input>
+        <Button title="Add Plant" onPress={() => onSubmit()} />
+        {added ? (
+          <SafeAreaView
+            style={{
+              marginTop: 'auto',
+              backgroundColor: 'green',
+              width: '100%',
+              height: '6.66%'
+            }}
+          >
+            <Text
+              style={{
+                marginTop: 'auto',
+                marginBottom: 'auto',
+                marginLeft: '2%'
+              }}
+            >
+              {added}
+            </Text>
+          </SafeAreaView>
+        ) : null}
+      </AddPlantView>
+    </TouchableWithoutFeedback>
   );
 };
 
