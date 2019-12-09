@@ -48,7 +48,7 @@ const PlantCard = (props: PropsInterface) => {
         <NextWatering nextWatering={props.nextWatering}></NextWatering>
       </PlantDetailsStyles>
       <Button
-        title="Water!"
+        title="Water Me!"
         onPress={() => props.waterPlant(props.id)}
       ></Button>
     </PlantCardStyles>

@@ -9,7 +9,7 @@ export interface Plant {
   name: string;
   species?: Species | {};
   speciesId: string;
-  photo: string;
+  photo: string | null;
   wateringInterval: number;
   lastWatered: Date;
   nextWatering: Date;
@@ -65,8 +65,10 @@ const WATER_PLANT_MUTATION = gql`
 `;
 
 const PlantList = () => {
-  const { loading, error, data } = useQuery(PLANTS_QUERY);
+  const { loading, error, data, refetch } = useQuery(PLANTS_QUERY);
   const [plants, setPlants] = useState();
+  const [refreshing, setRefreshing] = useState(false);
+
   const [waterPlantMutation] = useMutation(WATER_PLANT_MUTATION);
 
   const waterPlant = async (plantId: string) => {
@@ -91,14 +93,14 @@ const PlantList = () => {
       updatedPlants[wateredPlantIndex].lastWatered = wateredPlant.lastWatered;
       updatedPlants[wateredPlantIndex].nextWatering = wateredPlant.nextWatering;
 
-      setPlants(updatedPlants.sort((a, b) => a.nextWatering > b.nextWatering));
+      setPlants(sortPlants(updatedPlants));
     }
   };
 
   // todo: call query on navigation
   useEffect(() => {
     const onCompleted = data => {
-      setPlants(data.plants.sort((a, b) => a.nextWatering > b.nextWatering));
+      setPlants(sortPlants(data.plants));
     };
     const onError = error => {};
     if (onCompleted || onError) {
@@ -109,12 +111,26 @@ const PlantList = () => {
       }
     }
   }, [loading, data, error]);
+
+  const sortPlants = (plants: Plant[]) => {
+    return plants.sort((a, b) => a.nextWatering > b.nextWatering);
+  };
+
+  const refreshList = async () => {
+    const { data, error, loading } = await refetch();
+
+    if (loading) {
+      setRefreshing(true);
+    }
+    if (data) {
+      setRefreshing(false);
+      setPlants(sortPlants(data.plants));
+    }
+  };
   return (
     <View style={{ flex: 1 }}>
       {loading ? (
         <Text>Loading...</Text>
-      ) : error ? (
-        <Text>{error.message}</Text>
       ) : (
         <FlatList
           ListHeaderComponent={() => (
@@ -126,6 +142,8 @@ const PlantList = () => {
           initialNumToRender={10}
           maxToRenderPerBatch={5}
           ItemSeparatorComponent={() => <View style={{ height: 15 }}></View>}
+          onRefresh={() => refreshList()}
+          refreshing={refreshing}
           renderItem={({ item }) => (
             <PlantCard
               id={item.id}
