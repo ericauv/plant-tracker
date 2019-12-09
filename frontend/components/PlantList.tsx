@@ -1,6 +1,9 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, FlatList, Text } from 'react-native';
+import gql from 'graphql-tag';
+import { useQuery } from '@apollo/react-hooks';
 import PlantCard from './PlantCard';
+
 const DATA = [
   {
     name: 'Monty',
@@ -96,28 +99,68 @@ const DATA = [
   },
 ];
 
+const PLANTS_QUERY = gql`
+  query PLANTS_QUERY {
+    plants {
+      name
+      species {
+        name
+      }
+      description
+      lastWatered
+      nextWatering
+    }
+  }
+`;
+
 const PlantList = () => {
+  const { loading, error, data } = useQuery(PLANTS_QUERY);
+  const [plants, setPlants] = useState();
+  useEffect(() => {
+    const onCompleted = data => {
+      console.log(data.plants[0]);
+
+      setPlants(data.plants.sort((a, b) => a.nextWatering > b.nextWatering));
+    };
+    const onError = error => {
+      console.log(error.message);
+    };
+    if (onCompleted || onError) {
+      if (onCompleted && !loading && !error) {
+        onCompleted(data);
+      } else if (onError && !loading && error) {
+        onError(error);
+      }
+    }
+  }, [loading, data, error]);
+  console.log(plants);
   return (
     <View style={{ flex: 1 }}>
-      <FlatList
-        ListHeaderComponent={() => (
-          <Text style={{ fontSize: 32 }}>Plant List</Text>
-        )}
-        ListFooterComponent={() => <Text style={{ fontSize: 32 }}>End</Text>}
-        keyExtractor={(item, index) => `${item.name}-${index}`}
-        data={DATA.sort((a, b) => a.nextWatering > b.nextWatering)}
-        initialNumToRender={10}
-        maxToRenderPerBatch={5}
-        ItemSeparatorComponent={() => <View style={{ height: 15 }}></View>}
-        renderItem={({ item }) => (
-          <PlantCard
-            name={item.name}
-            species={item.species}
-            nextWatering={item.nextWatering.getTime()}
-            photo={item.photo}
-          ></PlantCard>
-        )}
-      ></FlatList>
+      {loading ? (
+        <Text>Loading...</Text>
+      ) : error ? (
+        <Text>{error.message}</Text>
+      ) : (
+        <FlatList
+          ListHeaderComponent={() => (
+            <Text style={{ fontSize: 32 }}>Plant List</Text>
+          )}
+          ListFooterComponent={() => <Text style={{ fontSize: 32 }}>End</Text>}
+          keyExtractor={(item, index) => `${item.name}-${index}`}
+          data={plants}
+          initialNumToRender={10}
+          maxToRenderPerBatch={5}
+          ItemSeparatorComponent={() => <View style={{ height: 15 }}></View>}
+          renderItem={({ item }) => (
+            <PlantCard
+              name={item.name}
+              species={item.species.name}
+              nextWatering={item.nextWatering}
+              photo={item.photo}
+            ></PlantCard>
+          )}
+        ></FlatList>
+      )}
     </View>
   );
 };

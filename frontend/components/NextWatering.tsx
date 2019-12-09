@@ -15,6 +15,8 @@ const NextWatering = (props: Props) => {
   const getTextProps = (daysToNextWatering: number): TextProps => {
     let day;
     let color;
+    console.log(daysToNextWatering);
+
     // Water Today
     if (daysToNextWatering === 0) {
       day = 'Today';
@@ -43,8 +45,8 @@ const NextWatering = (props: Props) => {
   };
 
   const daysToNextWatering = differenceInCalendarDays(
-    new Date(props.nextWatering),
-    new Date()
+    new Date(Number(props.nextWatering)),
+    Date.now()
   );
   const textProps = getTextProps(daysToNextWatering);
 

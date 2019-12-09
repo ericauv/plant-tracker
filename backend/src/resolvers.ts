@@ -23,8 +23,14 @@ const Resolvers = {
       return species;
     },
     plants: (parent: any, args: { id: number }, ctx: any, info: any) => {
+      console.log('plants');
+      const returnPlants = plants.map(plant => {
+        plant.species = {
+          ...species.find(species => species.id === plant.speciesId),
+        };
+      });
       return plants;
-    }
+    },
   },
   Mutation: {
     addPlant: (
@@ -35,8 +41,8 @@ const Resolvers = {
     ) => {
       console.log(`added plant: ${args.name}`);
       return `added plant: ${args.name}`;
-    }
-  }
+    },
+  },
 };
 
 export default Resolvers;

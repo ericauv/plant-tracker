@@ -1,6 +1,9 @@
+import { Species } from './species';
+
 export interface Plant {
   id: string;
   name: string;
+  species?: Species | {};
   speciesId: string;
   photo: string;
   wateringInterval: number;
@@ -17,7 +20,7 @@ export const plants: Plant[] = [
     photo: '',
     wateringInterval: 7,
     lastWatered: new Date(2019, 11, 1),
-    nextWatering: new Date(),
+    nextWatering: new Date(2019, 11, 13),
     description: '15 years old monstera plant!',
   },
   {
@@ -27,7 +30,7 @@ export const plants: Plant[] = [
     photo: '',
     wateringInterval: 10,
     lastWatered: new Date(2019, 11, 1),
-    nextWatering: new Date(),
+    nextWatering: new Date(2019, 11, 10),
     description: 'Fiddle leaf fig!',
   },
 ];

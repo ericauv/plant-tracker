@@ -21,7 +21,7 @@ const schema = gql`
 
   type Species {
     id: ID!
-    species: String
+    name: String
     soilType: String
     waterAmount: String
     lightAmount: String
