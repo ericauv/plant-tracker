@@ -17,7 +17,8 @@ export const plants: Plant[] = [
     id: '1',
     name: 'Molly',
     speciesId: '1',
-    photo: '',
+    photo:
+      'https://images.unsplash.com/photo-1525498128493-380d1990a112?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80',
     wateringInterval: 7,
     lastWatered: new Date(2019, 11, 1),
     nextWatering: new Date(2019, 11, 13),

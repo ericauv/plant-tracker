@@ -109,6 +109,7 @@ const PLANTS_QUERY = gql`
       description
       lastWatered
       nextWatering
+      photo
     }
   }
 `;
