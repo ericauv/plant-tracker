@@ -9,12 +9,12 @@ import Navigation from './components/navigation/Navigation';
 import { BACKEND_URI } from './config.js';
 const cache = new InMemoryCache();
 const link = new HttpLink({
-  uri: BACKEND_URI,
+  uri: BACKEND_URI
 });
 
 const client = new ApolloClient({
   cache,
-  link,
+  link
 });
 
 const App = () => {
@@ -30,8 +30,8 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    justifyContent: 'center',
-  },
+    justifyContent: 'center'
+  }
 });
 
 export default App;

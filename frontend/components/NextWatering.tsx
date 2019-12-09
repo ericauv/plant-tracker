@@ -15,7 +15,6 @@ const NextWatering = (props: Props) => {
   const getTextProps = (daysToNextWatering: number): TextProps => {
     let day;
     let color;
-    console.log(daysToNextWatering);
 
     // Water Today
     if (daysToNextWatering === 0) {

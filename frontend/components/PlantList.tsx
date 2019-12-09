@@ -1,107 +1,47 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, Text } from 'react-native';
 import gql from 'graphql-tag';
-import { useQuery } from '@apollo/react-hooks';
+import { useQuery, useMutation } from '@apollo/react-hooks';
 import PlantCard from './PlantCard';
 
-const DATA = [
-  {
-    name: 'Monty',
-    species: 'Monstera',
-    nextWatering: new Date(2019, 11, 5),
-    photo:
-      'https://images.unsplash.com/photo-1525498128493-380d1990a112?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&w=1000&q=80',
-  },
-  {
-    name: 'Victoria',
-    species: 'Lemon Basil',
-    nextWatering: new Date(2019, 11, 6),
-    photo: '',
-  },
-  {
-    name: 'Rubber',
-    species: 'Rubber Tree',
-    nextWatering: new Date(2019, 11, 4),
-    photo: '',
-  },
-  {
-    name: 'Big Monty',
-    species: 'Monstera',
-    nextWatering: new Date(2019, 11, 3),
-    photo:
-      'https://bloomscape.com/wp-content/uploads/2019/04/bloomscape_peopleplants_monstera.jpg',
-  },
-  {
-    name: 'Money',
-    species: 'Money Tree',
-    nextWatering: new Date(2019, 11, 2),
-    photo: '',
-  },
-  {
-    name: 'Monty',
-    species: 'Monstera',
-    nextWatering: new Date(2019, 11, 5),
-    photo: '',
-  },
-  {
-    name: 'Rubber',
-    species: 'Rubber Tree',
-    nextWatering: new Date(2019, 11, 4),
-    photo: '',
-  },
-  {
-    name: 'Big Monty',
-    species: 'Monstera',
-    nextWatering: new Date(2019, 11, 3),
-    photo: '',
-  },
-  {
-    name: 'Big Monty',
-    species: 'Monstera',
-    nextWatering: new Date(2019, 11, 3),
-    photo: '',
-  },
-  {
-    name: 'Money',
-    species: 'Money Tree',
-    nextWatering: new Date(2019, 11, 2),
-    photo: '',
-  },
-  {
-    name: 'Monty',
-    species: 'Monstera',
-    nextWatering: new Date(2019, 11, 5),
-    photo: '',
-  },
-  {
-    name: 'Victoria',
-    species: 'Lemon Basil',
-    nextWatering: new Date(2019, 11, 6),
-    photo: '',
-  },
-  {
-    name: 'Rubber',
-    species: 'Rubber Tree',
-    nextWatering: new Date(2019, 11, 4),
-    photo: '',
-  },
-  {
-    name: 'Big Monty',
-    species: 'Monstera',
-    nextWatering: new Date(2019, 11, 3),
-    photo: '',
-  },
-  {
-    name: 'Cash',
-    species: 'Money Tree',
-    nextWatering: new Date(2019, 11, 2),
-    photo: '',
-  },
-];
+export interface Plant {
+  id: string;
+  name: string;
+  species?: Species | {};
+  speciesId: string;
+  photo: string;
+  wateringInterval: number;
+  lastWatered: Date;
+  nextWatering: Date;
+  description: string;
+}
+
+enum waterAmount {
+  'low',
+  'medium',
+  'high'
+}
+
+enum lightAmount {
+  'low',
+  'medium',
+  'bright'
+}
+
+export interface Species {
+  id: string;
+  name: string;
+  soilType: string;
+  waterAmount: waterAmount;
+  lightAmount: lightAmount;
+  temperature: [number, number];
+  description: string;
+}
 
 const PLANTS_QUERY = gql`
   query PLANTS_QUERY {
     plants {
+      id
       name
       species {
         name
@@ -114,18 +54,53 @@ const PLANTS_QUERY = gql`
   }
 `;
 
+const WATER_PLANT_MUTATION = gql`
+  mutation WATER_PLANT_MUTATION($id: ID!) {
+    waterPlant(id: $id) {
+      id
+      lastWatered
+      nextWatering
+    }
+  }
+`;
+
 const PlantList = () => {
   const { loading, error, data } = useQuery(PLANTS_QUERY);
   const [plants, setPlants] = useState();
+  const [waterPlantMutation] = useMutation(WATER_PLANT_MUTATION);
+
+  const waterPlant = async (plantId: string) => {
+    console.log(plantId);
+
+    const wateredPlant = await waterPlantMutation({
+      variables: { id: plantId }
+    });
+
+    // todo: handle error, loading
+    if (wateredPlant) {
+      updateAfterWatering(wateredPlant);
+    }
+  };
+  // Update the plants list after one is watered
+  const updateAfterWatering = wateredPlant => {
+    const updatedPlants = [...plants];
+    const wateredPlantIndex = updatedPlants.findIndex(
+      (plant: Plant) => plant.id === wateredPlant.id
+    );
+    if (wateredPlantIndex >= 0) {
+      updatedPlants[wateredPlantIndex].lastWatered = wateredPlant.lastWatered;
+      updatedPlants[wateredPlantIndex].nextWatering = wateredPlant.nextWatering;
+
+      setPlants(updatedPlants.sort((a, b) => a.nextWatering > b.nextWatering));
+    }
+  };
+
+  // todo: call query on navigation
   useEffect(() => {
     const onCompleted = data => {
-      console.log(data.plants[0]);
-
       setPlants(data.plants.sort((a, b) => a.nextWatering > b.nextWatering));
     };
-    const onError = error => {
-      console.log(error.message);
-    };
+    const onError = error => {};
     if (onCompleted || onError) {
       if (onCompleted && !loading && !error) {
         onCompleted(data);
@@ -134,7 +109,6 @@ const PlantList = () => {
       }
     }
   }, [loading, data, error]);
-  console.log(plants);
   return (
     <View style={{ flex: 1 }}>
       {loading ? (
@@ -154,10 +128,12 @@ const PlantList = () => {
           ItemSeparatorComponent={() => <View style={{ height: 15 }}></View>}
           renderItem={({ item }) => (
             <PlantCard
+              id={item.id}
               name={item.name}
               species={item.species.name}
               nextWatering={item.nextWatering}
               photo={item.photo}
+              waterPlant={waterPlant}
             ></PlantCard>
           )}
         ></FlatList>

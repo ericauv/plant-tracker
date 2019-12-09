@@ -1,14 +1,16 @@
 import React from 'react';
 import styled from 'styled-components';
-import { View, Text, Image } from 'react-native';
+import { View, Text, Image, Button } from 'react-native';
 import NextWatering from './NextWatering';
 import plantImage from '../assets/leaf.png';
 
 interface PropsInterface {
+  id: string;
   name: string;
   species: string;
   photo: string;
   nextWatering: number;
+  waterPlant: any;
 }
 
 const PlantCardStyles = styled.View`
@@ -45,6 +47,10 @@ const PlantCard = (props: PropsInterface) => {
         <Text style={{ fontStyle: 'italic' }}>{props.species}</Text>
         <NextWatering nextWatering={props.nextWatering}></NextWatering>
       </PlantDetailsStyles>
+      <Button
+        title="Water!"
+        onPress={() => props.waterPlant(props.id)}
+      ></Button>
     </PlantCardStyles>
   );
 };

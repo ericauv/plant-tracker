@@ -37,7 +37,8 @@ const schema = gql`
   }
 
   type Mutation {
-    addPlant(name: String!, species: String, description: String): String
+    addPlant(name: String!, species: String, description: String): Plant
+    waterPlant(id: ID!): Plant
   }
 `;
 

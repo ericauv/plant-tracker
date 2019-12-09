@@ -6,7 +6,7 @@ import {
   Text,
   TextInput,
   Alert,
-  Keyboard,
+  Keyboard
 } from 'react-native';
 import styled from 'styled-components';
 import { useMutation } from '@apollo/react-hooks';
@@ -28,7 +28,10 @@ const ADD_PLANT_MUTATION = gql`
     $species: String
     $description: String
   ) {
-    addPlant(name: $name, species: $species, description: $description)
+    addPlant(name: $name, species: $species, description: $description) {
+      id
+      name
+    }
   }
 `;
 
@@ -40,7 +43,7 @@ const AddPlantScreen = () => {
   const [addPlant] = useMutation(ADD_PLANT_MUTATION);
   const onSubmit = () => {
     addPlant({
-      variables: { name: name, species: species, description: description },
+      variables: { name: name, species: species, description: description }
     });
     Keyboard.dismiss();
     setAdded(`Added ${name}`);
@@ -75,14 +78,14 @@ const AddPlantScreen = () => {
               marginTop: 'auto',
               backgroundColor: 'green',
               width: '100%',
-              height: '6.66%',
+              height: '6.66%'
             }}
           >
             <Text
               style={{
                 marginTop: 'auto',
                 marginBottom: 'auto',
-                marginLeft: '2%',
+                marginLeft: '2%'
               }}
             >
               {added}

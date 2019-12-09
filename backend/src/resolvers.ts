@@ -1,5 +1,6 @@
+import { addDays } from 'date-fns';
 import { users } from './data/users';
-import { plants } from './data/plants';
+import { plants, Plant } from './data/plants';
 import { species } from './data/species';
 
 let newPlants = [...plants];
@@ -27,14 +28,14 @@ const Resolvers = {
       console.log('plants');
       const returnPlants = newPlants.map(plant => {
         plant.species = {
-          ...species.find(species => species.id === plant.speciesId),
+          ...species.find(species => species.id === plant.speciesId)
         };
         return plant;
       });
       console.log(returnPlants);
 
       return returnPlants;
-    },
+    }
   },
   Mutation: {
     addPlant: (
@@ -44,20 +45,36 @@ const Resolvers = {
       info: any
     ) => {
       console.log(`added plant: ${args.name}`);
-      newPlants.push({
-        id: `${Math.random()}-${args.name}}`,
+      const newPlant: Plant = {
+        id: `${Math.random()}-${args.name}`,
         name: args.name,
         speciesId: '2',
         photo: '',
         wateringInterval: 10,
         lastWatered: new Date(2019, 11, 1),
         nextWatering: new Date(2019, 11, 10),
-        description: 'Fiddle leaf fig!',
-      });
-      console.log(newPlants);
-      return `added plant: ${args.name}`;
+        description: 'Fiddle leaf fig!'
+      };
+      newPlants.push(newPlant);
+      return newPlant;
     },
-  },
+    waterPlant: (parent: any, args: { id: string }, ctx: any, info: any) => {
+      const plantToWater: Plant | undefined = newPlants.find(
+        (plant: Plant) => plant.id === args.id
+      );
+      if (plantToWater) {
+        plantToWater.lastWatered = new Date();
+        plantToWater.nextWatering = addDays(
+          Date.now(),
+          plantToWater.wateringInterval
+        );
+        console.log(`watered Plant: ${args.id}, aka: ${plantToWater.name}`);
+        return plantToWater;
+      } else {
+        throw Error(`Plant with id: ${args.id} not found.`);
+      }
+    }
+  }
 };
 
 export default Resolvers;
