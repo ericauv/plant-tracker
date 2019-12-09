@@ -2,6 +2,7 @@ import { users } from './data/users';
 import { plants } from './data/plants';
 import { species } from './data/species';
 
+let newPlants = [...plants];
 type ResolverFn = (parent: any, args: any, ctx: any, info: any) => any;
 interface ResolverMap {
   [field: string]: ResolverFn;
@@ -24,12 +25,15 @@ const Resolvers = {
     },
     plants: (parent: any, args: { id: number }, ctx: any, info: any) => {
       console.log('plants');
-      const returnPlants = plants.map(plant => {
+      const returnPlants = newPlants.map(plant => {
         plant.species = {
           ...species.find(species => species.id === plant.speciesId),
         };
+        return plant;
       });
-      return plants;
+      console.log(returnPlants);
+
+      return returnPlants;
     },
   },
   Mutation: {
@@ -40,6 +44,17 @@ const Resolvers = {
       info: any
     ) => {
       console.log(`added plant: ${args.name}`);
+      newPlants.push({
+        id: `${Math.random()}-${args.name}}`,
+        name: args.name,
+        speciesId: '2',
+        photo: '',
+        wateringInterval: 10,
+        lastWatered: new Date(2019, 11, 1),
+        nextWatering: new Date(2019, 11, 10),
+        description: 'Fiddle leaf fig!',
+      });
+      console.log(newPlants);
       return `added plant: ${args.name}`;
     },
   },
