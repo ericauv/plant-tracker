@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { View, FlatList, Text } from 'react-native';
 import gql from 'graphql-tag';
-import { useQuery, useMutation } from '@apollo/react-hooks';
+import { useLazyQuery, useMutation } from '@apollo/react-hooks';
+import { withNavigation } from 'react-navigation';
 import PlantCard from './PlantCard';
 
 export interface Plant {
@@ -63,24 +64,44 @@ const WATER_PLANT_MUTATION = gql`
     }
   }
 `;
+const sortPlants = (plants: Plant[]) => {
+  return plants.sort((a, b) => a.nextWatering > b.nextWatering);
+};
 
-const PlantList = () => {
-  const { loading, error, data, refetch } = useQuery(PLANTS_QUERY);
+const PlantList = props => {
+  const [getPlants, { loading, error, data }] = useLazyQuery(PLANTS_QUERY, {
+    fetchPolicy: 'cache-and-network',
+    onCompleted: () => {
+      setRefreshing(false);
+      setPlants(sortPlants(data.plants));
+    }
+  });
   const [plants, setPlants] = useState();
   const [refreshing, setRefreshing] = useState(false);
 
+  useEffect(() => {
+    // fire query on mount
+    getPlants();
+    const { navigation } = props;
+    // add listener on mount
+    const focusListener = navigation.addListener('didFocus', () => {
+      getPlants();
+    });
+    // remove listener on unmount
+    return () => focusListener.remove();
+  }, []);
+
+  // WATERING
   const [waterPlantMutation] = useMutation(WATER_PLANT_MUTATION);
 
   const waterPlant = async (plantId: string) => {
-    console.log(plantId);
-
     const wateredPlant = await waterPlantMutation({
       variables: { id: plantId }
     });
 
     // todo: handle error, loading
     if (wateredPlant) {
-      updateAfterWatering(wateredPlant);
+      updateAfterWatering(wateredPlant.data.waterPlant);
     }
   };
   // Update the plants list after one is watered
@@ -97,67 +118,38 @@ const PlantList = () => {
     }
   };
 
-  // todo: call query on navigation
-  useEffect(() => {
-    const onCompleted = data => {
-      setPlants(sortPlants(data.plants));
-    };
-    const onError = error => {};
-    if (onCompleted || onError) {
-      if (onCompleted && !loading && !error) {
-        onCompleted(data);
-      } else if (onError && !loading && error) {
-        onError(error);
-      }
-    }
-  }, [loading, data, error]);
-
-  const sortPlants = (plants: Plant[]) => {
-    return plants.sort((a, b) => a.nextWatering > b.nextWatering);
-  };
-
-  const refreshList = async () => {
-    const { data, error, loading } = await refetch();
-
+  // SWIPE TO REFRESH
+  const refreshList = () => {
+    getPlants();
     if (loading) {
       setRefreshing(true);
-    }
-    if (data) {
-      setRefreshing(false);
-      setPlants(sortPlants(data.plants));
     }
   };
   return (
     <View style={{ flex: 1 }}>
-      {loading ? (
-        <Text>Loading...</Text>
-      ) : (
-        <FlatList
-          ListHeaderComponent={() => (
-            <Text style={{ fontSize: 32 }}>Plant List</Text>
-          )}
-          ListFooterComponent={() => <Text style={{ fontSize: 32 }}>End</Text>}
-          keyExtractor={(item, index) => `${item.name}-${index}`}
-          data={plants}
-          initialNumToRender={10}
-          maxToRenderPerBatch={5}
-          ItemSeparatorComponent={() => <View style={{ height: 15 }}></View>}
-          onRefresh={() => refreshList()}
-          refreshing={refreshing}
-          renderItem={({ item }) => (
-            <PlantCard
-              id={item.id}
-              name={item.name}
-              species={item.species.name}
-              nextWatering={item.nextWatering}
-              photo={item.photo}
-              waterPlant={waterPlant}
-            ></PlantCard>
-          )}
-        ></FlatList>
-      )}
+      <FlatList
+        ListHeaderComponent={() => <Text style={{ fontSize: 32 }}>Plants</Text>}
+        ListFooterComponent={() => <Text style={{ fontSize: 32 }}>End</Text>}
+        keyExtractor={(item, index) => `${item.name}-${index}`}
+        data={plants}
+        initialNumToRender={10}
+        maxToRenderPerBatch={5}
+        ItemSeparatorComponent={() => <View style={{ height: 15 }}></View>}
+        onRefresh={() => refreshList()}
+        refreshing={refreshing}
+        renderItem={({ item }) => (
+          <PlantCard
+            id={item.id}
+            name={item.name}
+            species={item.species.name}
+            nextWatering={item.nextWatering}
+            photo={item.photo}
+            waterPlant={waterPlant}
+          ></PlantCard>
+        )}
+      ></FlatList>
     </View>
   );
 };
 
-export default PlantList;
+export default withNavigation(PlantList);

@@ -50,7 +50,7 @@ const Resolvers = {
         name: args.name,
         speciesId: '2',
         photo: '',
-        wateringInterval: 10,
+        wateringInterval: Math.round(Math.random() * 7),
         lastWatered: new Date(2019, 11, 1),
         nextWatering: new Date(2019, 11, 10),
         description: 'Fiddle leaf fig!'
