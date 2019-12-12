@@ -1,7 +1,7 @@
 import { addDays } from 'date-fns';
 import { users } from './data/users';
 import { plants, Plant } from './data/plants';
-import { species } from './data/species';
+import { species, Species } from './data/species';
 
 let newPlants = [...plants];
 type ResolverFn = (parent: any, args: any, ctx: any, info: any) => any;
@@ -28,19 +28,19 @@ const Resolvers = {
       console.log('plants');
       const returnPlants = newPlants.map(plant => {
         plant.species = {
-          ...species.find(species => species.id === plant.speciesId)
+          ...species.find(species => species.id === plant.speciesId),
         };
         return plant;
       });
       console.log(returnPlants);
 
       return returnPlants;
-    }
+    },
   },
   Mutation: {
     addPlant: (
       parent: any,
-      args: { name: string; species: string; description: string },
+      args: { name: string; speciesName: string; description: string },
       ctx: any,
       info: any
     ) => {
@@ -48,12 +48,17 @@ const Resolvers = {
       const newPlant: Plant = {
         id: `${Math.random()}-${args.name}`,
         name: args.name,
-        speciesId: '2',
-        photo: '',
-        wateringInterval: Math.round(Math.random() * 7),
-        lastWatered: new Date(2019, 11, 1),
-        nextWatering: new Date(2019, 11, 10),
-        description: 'Fiddle leaf fig!'
+        speciesId: '2', //  TODO:  create a Species object here
+        image: {
+          id: '',
+          url: '',
+        },
+        wateringInfo: {
+          wateringInterval: Math.round(Math.random() * 7),
+          lastWatered: new Date(2019, 11, 1),
+          nextWatering: new Date(2019, 11, 10),
+        },
+        description: 'Fiddle leaf fig!',
       };
       newPlants.push(newPlant);
       return newPlant;
@@ -63,18 +68,18 @@ const Resolvers = {
         (plant: Plant) => plant.id === args.id
       );
       if (plantToWater) {
-        plantToWater.lastWatered = new Date();
-        plantToWater.nextWatering = addDays(
+        plantToWater.wateringInfo.lastWatered = new Date();
+        plantToWater.wateringInfo.nextWatering = addDays(
           Date.now(),
-          plantToWater.wateringInterval
+          plantToWater.wateringInfo.wateringInterval
         );
         console.log(`watered Plant: ${args.id}, aka: ${plantToWater.name}`);
         return plantToWater;
       } else {
         throw Error(`Plant with id: ${args.id} not found.`);
       }
-    }
-  }
+    },
+  },
 };
 
 export default Resolvers;
