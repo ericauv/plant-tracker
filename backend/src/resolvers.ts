@@ -57,7 +57,7 @@ const Resolvers = {
   Mutation: {
     addPlant: (
       parent: any,
-      args: { name: string; speciesName: string; description: string },
+      args: { name: string; speciesName?: string; description?: string },
       ctx: any,
       info: any
     ) => {
