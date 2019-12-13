@@ -5,28 +5,58 @@ const schema = gql`
     id: ID!
     name: String
     plants: [Plant]
-    climate: String
+    climate: Climate
   }
 
   type Plant {
     id: ID!
     name: String
     species: Species
-    photo: String
-    wateringInterval: Int
-    lastWatered: String
-    nextWatering: String
+    image: Image
+    wateringInfo: WateringInfo
     description: String
   }
 
   type Species {
     id: ID!
     name: String
-    soilType: String
-    waterAmount: String
-    lightAmount: String
-    temperature: [Int]
+    preferredConditions: SpeciesPreferredConditions
     description: String
+  }
+
+  type WateringInfo {
+    wateringInterval: Int # TODO: calculate watering interval based on the climate
+    lastWatered: String
+    nextWatering: String
+  }
+
+  type SpeciesPreferredConditions {
+    soilType: String
+    waterAmount: WaterAmount
+    lightAmount: LightAmount
+    temperature: [Int]
+  }
+
+  type Climate {
+    id: ID!
+    # TODO: determine how to best define it
+  }
+
+  type Image {
+    id: ID!
+    url: String
+  }
+
+  enum WaterAmount {
+    LOW
+    MEDIUM
+    HIGH
+  }
+
+  enum LightAmount {
+    LOW
+    MEDIUM
+    HIGH
   }
 
   type PlantsCategorized {
@@ -48,7 +78,7 @@ const schema = gql`
   }
 
   type Mutation {
-    addPlant(name: String!, species: String, description: String): Plant
+    addPlant(name: String!, speciesName: String, description: String): Plant
     waterPlant(id: ID!): Plant
   }
 `;

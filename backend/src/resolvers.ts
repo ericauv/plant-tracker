@@ -1,7 +1,7 @@
 import { addDays, differenceInCalendarDays } from 'date-fns';
 import { users } from './data/users';
 import { plants, Plant } from './data/plants';
-import { species } from './data/species';
+import { species, Species } from './data/species';
 
 let plantsWithSpecies = [...plants].map(plant => {
   plant.species = {
@@ -54,7 +54,7 @@ const Resolvers = {
   Mutation: {
     addPlant: (
       parent: any,
-      args: { name: string; species: string; description: string },
+      args: { name: string; speciesName: string; description: string },
       ctx: any,
       info: any
     ) => {
@@ -62,11 +62,16 @@ const Resolvers = {
       const newPlant: Plant = {
         id: `${Math.random()}-${args.name}`,
         name: args.name,
-        speciesId: '2',
-        photo: '',
-        wateringInterval: Math.round(Math.random() * 7),
-        lastWatered: new Date(2019, 11, 1),
-        nextWatering: new Date(2019, 11, 10),
+        speciesId: '2', //  TODO:  create a Species object here
+        image: {
+          id: '',
+          url: ''
+        },
+        wateringInfo: {
+          wateringInterval: Math.round(Math.random() * 7),
+          lastWatered: new Date(2019, 11, 1),
+          nextWatering: new Date(2019, 11, 10)
+        },
         description: 'Fiddle leaf fig!'
       };
       plantsWithSpecies.push(newPlant);
@@ -77,10 +82,10 @@ const Resolvers = {
         (plant: Plant) => plant.id === args.id
       );
       if (plantToWater) {
-        plantToWater.lastWatered = new Date();
-        plantToWater.nextWatering = addDays(
+        plantToWater.wateringInfo.lastWatered = new Date();
+        plantToWater.wateringInfo.nextWatering = addDays(
           Date.now(),
-          plantToWater.wateringInterval
+          plantToWater.wateringInfo.wateringInterval
         );
         console.log(`watered Plant: ${args.id}, aka: ${plantToWater.name}`);
         return plantToWater;
