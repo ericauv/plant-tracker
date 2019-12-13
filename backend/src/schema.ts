@@ -29,10 +29,21 @@ const schema = gql`
     description: String
   }
 
+  type PlantsCategorized {
+    nextWatering: PlantsCategorizedByNextWatering
+  }
+
+  type PlantsCategorizedByNextWatering {
+    overdue: [Plant]
+    today: [Plant]
+    future: [Plant]
+  }
+
   type Query {
     user(id: ID): User
     users: [User]
     plants(userId: ID): [Plant]
+    plantsByCategory: PlantsCategorized
     species(speciesName: String): [Species]
   }
 

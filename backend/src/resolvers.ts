@@ -1,9 +1,14 @@
-import { addDays } from 'date-fns';
+import { addDays, differenceInCalendarDays } from 'date-fns';
 import { users } from './data/users';
 import { plants, Plant } from './data/plants';
 import { species } from './data/species';
 
-let newPlants = [...plants];
+let plantsWithSpecies = [...plants].map(plant => {
+  plant.species = {
+    ...species.find(species => species.id === plant.speciesId)
+  };
+  return plant;
+});
 type ResolverFn = (parent: any, args: any, ctx: any, info: any) => any;
 interface ResolverMap {
   [field: string]: ResolverFn;
@@ -25,16 +30,25 @@ const Resolvers = {
       return species;
     },
     plants: (parent: any, args: { id: number }, ctx: any, info: any) => {
-      console.log('plants');
-      const returnPlants = newPlants.map(plant => {
-        plant.species = {
-          ...species.find(species => species.id === plant.speciesId)
-        };
-        return plant;
-      });
-      console.log(returnPlants);
+      return plantsWithSpecies;
+    },
+    plantsByCategory: (parent: any, args: any, ctx: any, info: any) => {
+      const daysToNextWatering = (nextWatering: Date): number =>
+        differenceInCalendarDays(nextWatering, Date.now());
 
-      return returnPlants;
+      const overdue: Plant[] = plantsWithSpecies.filter(
+        (plant: Plant) => daysToNextWatering(plant.nextWatering) < 0
+      );
+      const today: Plant[] = plantsWithSpecies.filter(
+        (plant: Plant) => daysToNextWatering(plant.nextWatering) === 0
+      );
+      const future: Plant[] = plantsWithSpecies.filter(
+        (plant: Plant) => daysToNextWatering(plant.nextWatering) > 0
+      );
+      const plantsCategorized = { nextWatering: { overdue, today, future } };
+      console.log(plantsCategorized);
+
+      return plantsCategorized;
     }
   },
   Mutation: {
@@ -55,11 +69,11 @@ const Resolvers = {
         nextWatering: new Date(2019, 11, 10),
         description: 'Fiddle leaf fig!'
       };
-      newPlants.push(newPlant);
+      plantsWithSpecies.push(newPlant);
       return newPlant;
     },
     waterPlant: (parent: any, args: { id: string }, ctx: any, info: any) => {
-      const plantToWater: Plant | undefined = newPlants.find(
+      const plantToWater: Plant | undefined = plantsWithSpecies.find(
         (plant: Plant) => plant.id === args.id
       );
       if (plantToWater) {
