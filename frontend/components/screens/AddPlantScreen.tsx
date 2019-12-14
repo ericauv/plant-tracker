@@ -25,10 +25,14 @@ const Input = styled.TextInput`
 const ADD_PLANT_MUTATION = gql`
   mutation ADD_PLANT_MUTATION(
     $name: String!
-    $species: String
+    $speciesName: String
     $description: String
   ) {
-    addPlant(name: $name, species: $species, description: $description) {
+    addPlant(
+      name: $name
+      speciesName: $speciesName
+      description: $description
+    ) {
       id
       name
     }
@@ -43,7 +47,7 @@ const AddPlantScreen = () => {
   const [addPlant] = useMutation(ADD_PLANT_MUTATION);
   const onSubmit = () => {
     addPlant({
-      variables: { name: name, species: species, description: description }
+      variables: { name: name, speciesName: species, description: description }
     });
     Keyboard.dismiss();
     setAdded(`Added ${name}`);
