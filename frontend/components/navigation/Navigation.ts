@@ -3,12 +3,14 @@ import { createBottomTabNavigator } from 'react-navigation-tabs';
 import HomeScreen from '../screens/HomeScreen';
 import PlantsScreen from '../screens/PlantsScreen';
 import AddPlantScreen from '../screens/AddPlantScreen';
+import CameraScreen from '../screens/CameraScreen';
 
 const TabNavigator = createBottomTabNavigator(
   {
     Home: HomeScreen,
     Plants: PlantsScreen,
     Add: AddPlantScreen,
+    Camera: CameraScreen,
   },
   {
     initialRouteName: 'Home',
